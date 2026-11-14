@@ -72,6 +72,7 @@ export const OrdersPage = () => {
           return (
             <div 
               key={order.orderId}
+              className="order-card-box"
               style={{
                 backgroundColor: 'var(--surface)',
                 borderRadius: 'var(--radius-lg)',
@@ -211,6 +212,14 @@ export const OrdersPage = () => {
           );
         })}
       </div>
+
+      <style>{`
+        @media (max-width: 640px) {
+          .order-card-box {
+            padding: 1.25rem 0.95rem !important;
+          }
+        }
+      `}</style>
 
     </div>
   );

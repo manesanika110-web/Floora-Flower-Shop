@@ -68,6 +68,30 @@ export const Navbar = () => {
     setIsScrolled(window.scrollY > 30);
   }, [location.pathname, location.search]);
 
+  // Lock body scroll when mobile menu is open
+  useEffect(() => {
+    if (mobileMenuOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [mobileMenuOpen]);
+
+  // Close menus on Escape key
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape') {
+        setMobileMenuOpen(false);
+        setSearchOpen(false);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
+
   const handleSearchSubmit = (e) => {
     e.preventDefault();
     if (searchQuery.trim()) {
@@ -109,33 +133,20 @@ export const Navbar = () => {
           transition: 'background-color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease, backdrop-filter 0.3s ease'
         }}
       >
-        <div className="container" style={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          height: '75px',
-          gap: '1rem'
-        }}>
+        <div className="container site-header-container">
 
           {/* 1. FLOORA LOGO */}
-          <Link to="/" style={{ display: 'flex', alignItems: 'center', gap: '0.65rem', flexShrink: 0 }}>
+          <Link to="/" className="navbar-logo-link">
             <img
               src="/floora_logo_icon.png"
               alt="Floora Logo"
               className="logo-icon-img"
-              style={{
-                width: '42px',
-                height: '42px',
-                objectFit: 'contain',
-                flexShrink: 0,
-                transition: 'transform 0.25s ease'
-              }}
             />
-            <div style={{ display: 'flex', flexDirection: 'column' }}>
-              <span className="font-serif logo-title" style={{ fontSize: '1.65rem', fontWeight: 700, color: 'var(--primary)', letterSpacing: '-0.5px', lineHeight: 1 }}>
+            <div className="logo-text-block">
+              <span className="font-serif logo-title">
                 Floora
               </span>
-              <span className="logo-sub" style={{ fontSize: '0.62rem', letterSpacing: '1px', textTransform: 'uppercase', color: 'var(--text-muted)', fontWeight: 600 }}>
+              <span className="logo-sub">
                 Flower Boutique
               </span>
             </div>
@@ -270,28 +281,28 @@ export const Navbar = () => {
 
           </nav>
 
-          {/* 3. RIGHT-SIDE ICONS: Search, Wishlist, Cart, My Account */}
-          <div className="navbar-right-actions" style={{ display: 'flex', alignItems: 'center', gap: '0.85rem', flexShrink: 0 }}>
+          {/* 3. RIGHT-SIDE ICONS: Search, Wishlist, Profile, Cart, Hamburger */}
+          <div className="navbar-right-actions">
 
-            {/* Search Button */}
+            {/* 1. Search Button */}
             <button
               type="button"
               onClick={() => setSearchOpen(!searchOpen)}
-              className="action-icon-btn"
+              className={`action-icon-btn ${searchOpen ? 'active' : ''}`}
               title="Search Flowers"
               aria-label="Search"
             >
-              <Search size={20} />
+              <Search size={18} />
             </button>
 
-            {/* Wishlist Button with Live Count Badge */}
+            {/* 2. Wishlist Button with Live Count Badge */}
             <Link
               to="/wishlist"
               className="action-icon-btn"
               title="My Wishlist"
               aria-label="Wishlist"
             >
-              <Heart size={20} />
+              <Heart size={18} />
               {wishlistCount > 0 && (
                 <span className="nav-badge-count">
                   {wishlistCount}
@@ -299,15 +310,38 @@ export const Navbar = () => {
               )}
             </Link>
 
+            {/* 3. Profile / My Account Button */}
+            <Link
+              to={currentUser ? "/profile" : "/auth"}
+              className="account-link-btn"
+              title={currentUser ? (currentUser.fullName || currentUser.displayName || "My Profile") : "My Account / Sign In"}
+              aria-label="Profile"
+            >
+              {currentUser ? (
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem' }}>
+                  <div className="account-avatar-dot">
+                    {(currentUser.fullName || currentUser.displayName || 'A')[0].toUpperCase()}
+                  </div>
+                  <span className="account-text-label" style={{ fontWeight: 600, fontSize: '0.92rem' }}>
+                    {(currentUser.fullName || currentUser.displayName || 'Account').split(' ')[0]}
+                  </span>
+                </div>
+              ) : (
+                <>
+                  <User size={18} />
+                  <span className="account-text-label">Sign In</span>
+                </>
+              )}
+            </Link>
 
-            {/* Shopping Cart Button with Live Count Badge */}
+            {/* 4. Shopping Cart Button with Live Count Badge */}
             <Link
               to="/cart"
               className={`action-icon-btn ${cartBouncing ? 'nav-cart-bounce' : ''}`}
               title="Shopping Cart"
               aria-label="Cart"
             >
-              <ShoppingBag size={20} />
+              <ShoppingBag size={18} />
               {totalItemsCount > 0 && (
                 <span className="nav-badge-count">
                   {totalItemsCount}
@@ -315,42 +349,7 @@ export const Navbar = () => {
               )}
             </Link>
 
-
-            {/* My Account Button */}
-            <Link
-              to={currentUser ? "/profile" : "/auth"}
-              className="account-link-btn"
-              title={currentUser ? (currentUser.fullName || currentUser.displayName || "My Profile") : "My Account / Sign In"}
-            >
-              {currentUser ? (
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                  <div style={{
-                    width: '32px',
-                    height: '32px',
-                    borderRadius: '50%',
-                    backgroundColor: '#C5A97A',
-                    color: '#FFFFFF',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    fontWeight: 700,
-                    fontSize: '0.9rem',
-                    flexShrink: 0
-                  }}>
-                    {(currentUser.fullName || currentUser.displayName || 'A')[0].toUpperCase()}
-                  </div>
-                  <span className="account-text-label" style={{ fontWeight: 600, fontSize: '0.95rem' }}>
-                    {(currentUser.fullName || currentUser.displayName || 'Account').split(' ')[0]}
-                  </span>
-                </div>
-              ) : (
-                <>
-                  <User size={19} />
-                  <span className="account-text-label">Sign In</span>
-                </>
-              )}
-            </Link>
-            {/* Direct Logout Button when user is logged in */}
+            {/* Direct Logout Button when user is logged in (desktop only) */}
             {currentUser && (
               <button
                 type="button"
@@ -361,26 +360,20 @@ export const Navbar = () => {
                 className="action-icon-btn nav-logout-btn"
                 title="Logout"
                 aria-label="Logout"
-                style={{
-                  color: '#E03131',
-                  backgroundColor: 'rgba(255, 245, 245, 0.85)',
-                  border: '1px solid #FFC9C9',
-                  cursor: 'pointer'
-                }}
               >
                 <LogOut size={17} />
               </button>
             )}
 
-
-            {/* Mobile Hamburger Toggle */}
+            {/* 5. Mobile Hamburger Toggle */}
             <button
               type="button"
-              className="mobile-menu-toggle"
+              className={`mobile-menu-toggle ${mobileMenuOpen ? 'open' : ''}`}
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              aria-label="Toggle menu"
+              aria-label={mobileMenuOpen ? "Close navigation menu" : "Open navigation menu"}
+              aria-expanded={mobileMenuOpen}
             >
-              {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+              {mobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
             </button>
 
           </div>
@@ -391,16 +384,16 @@ export const Navbar = () => {
         {searchOpen && (
           <div className="search-expand-bar animate-fade-in">
             <form onSubmit={handleSearchSubmit} className="container search-form-box">
-              <Search size={18} style={{ color: 'var(--text-muted)', marginLeft: '12px' }} />
+              <Search size={18} style={{ color: 'var(--text-muted)', marginLeft: '10px', flexShrink: 0 }} />
               <input
                 type="text"
-                placeholder="Search marigold, mogra, roses, lilies, orchids, sunflowers, colors..."
+                placeholder="Search flowers, bouquets, colors..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 autoFocus
                 className="search-input-field"
               />
-              <button type="submit" className="btn btn-primary btn-sm" style={{ padding: '0.45rem 1.25rem', borderRadius: 'var(--radius-full)' }}>
+              <button type="submit" className="btn btn-primary btn-sm search-submit-btn">
                 Search
               </button>
               <button
@@ -415,18 +408,29 @@ export const Navbar = () => {
           </div>
         )}
 
+        {/* MOBILE BACKDROP OVERLAY */}
+        {mobileMenuOpen && (
+          <div
+            className="mobile-drawer-backdrop animate-fade-in"
+            onClick={() => setMobileMenuOpen(false)}
+            aria-hidden="true"
+          />
+        )}
+
         {/* MOBILE RESPONSIVE DRAWER */}
         {mobileMenuOpen && (
-          <div className="mobile-drawer animate-fade-in">
+          <div className="mobile-drawer animate-fade-in" role="dialog" aria-modal="true" aria-label="Mobile Navigation">
             <div className="container mobile-drawer-inner">
 
               <Link to="/" onClick={() => setMobileMenuOpen(false)} className="mobile-nav-link">
                 <span>🏡 Home</span>
+                <span className="mobile-link-arrow">→</span>
               </Link>
 
 
               <Link to="/shop" onClick={() => setMobileMenuOpen(false)} className="mobile-nav-link">
                 <span>🛍️ Shop All</span>
+                <span className="mobile-link-arrow">→</span>
               </Link>
 
 
@@ -824,11 +828,161 @@ export const Navbar = () => {
           box-shadow: 0 1px 3px rgba(0,0,0,0.15);
         }
 
+        /* Site Header Container & Responsive Heights */
+        .site-header-container {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          height: 75px;
+          gap: 1rem;
+          width: 100%;
+        }
+
+        /* Responsive Floora Logo */
+        .navbar-logo-link {
+          display: flex;
+          align-items: center;
+          gap: 0.65rem;
+          flex-shrink: 0;
+          text-decoration: none;
+        }
+
+        .logo-icon-img {
+          width: 42px;
+          height: 42px;
+          object-fit: contain;
+          flex-shrink: 0;
+          transition: transform 0.25s ease;
+        }
+
+        .logo-text-block {
+          display: flex;
+          flex-direction: column;
+        }
+
+        .logo-title {
+          font-size: 1.65rem;
+          font-weight: 700;
+          color: var(--primary);
+          letter-spacing: -0.5px;
+          line-height: 1;
+        }
+
+        .logo-sub {
+          font-size: 0.62rem;
+          letter-spacing: 1px;
+          text-transform: uppercase;
+          color: var(--text-muted);
+          font-weight: 600;
+        }
+
+        @media (max-width: 768px) {
+          .site-header-container {
+            height: 60px;
+            gap: 0.4rem;
+            padding-left: 0.75rem !important;
+            padding-right: 0.75rem !important;
+          }
+
+          .navbar-logo-link {
+            gap: 0.4rem;
+          }
+
+          .logo-icon-img {
+            width: 34px;
+            height: 34px;
+          }
+
+          .logo-title {
+            font-size: 1.35rem;
+          }
+
+          .logo-sub {
+            font-size: 0.52rem;
+            letter-spacing: 0.6px;
+          }
+        }
+
+        @media (max-width: 480px) {
+          .site-header-container {
+            height: 56px;
+            gap: 0.25rem;
+            padding-left: 0.5rem !important;
+            padding-right: 0.5rem !important;
+          }
+
+          .navbar-logo-link {
+            gap: 0.3rem;
+          }
+
+          .logo-icon-img {
+            width: 28px;
+            height: 28px;
+          }
+
+          .logo-title {
+            font-size: 1.2rem;
+          }
+
+          .logo-sub {
+            display: none;
+          }
+        }
+
+        @media (max-width: 360px) {
+          .site-header-container {
+            padding-left: 0.35rem !important;
+            padding-right: 0.35rem !important;
+            gap: 0.15rem;
+          }
+          .navbar-logo-link {
+            gap: 0.25rem;
+          }
+          .logo-icon-img {
+            width: 26px;
+            height: 26px;
+          }
+          .logo-title {
+            font-size: 1.1rem;
+          }
+        }
+
+        /* Right Side Actions */
+        .navbar-right-actions {
+          display: flex;
+          align-items: center;
+          gap: 0.85rem;
+          flex-shrink: 0;
+          flex-wrap: nowrap;
+        }
+
+        @media (max-width: 768px) {
+          .navbar-right-actions {
+            gap: 0.35rem;
+            flex-wrap: nowrap;
+          }
+        }
+
+        @media (max-width: 480px) {
+          .navbar-right-actions {
+            gap: 0.2rem;
+            flex-wrap: nowrap;
+          }
+        }
+
+        @media (max-width: 360px) {
+          .navbar-right-actions {
+            gap: 0.15rem;
+          }
+        }
+
         /* Action Buttons */
         .action-icon-btn {
           position: relative;
           color: var(--text);
-          padding: 8px;
+          width: 40px;
+          height: 40px;
+          padding: 0;
           display: flex;
           align-items: center;
           justify-content: center;
@@ -837,9 +991,11 @@ export const Navbar = () => {
           background: transparent;
           border: none;
           cursor: pointer;
+          flex-shrink: 0;
         }
 
-        .action-icon-btn:hover {
+        .action-icon-btn:hover,
+        .action-icon-btn.active {
           background-color: var(--card-bg);
           color: var(--primary);
         }
@@ -858,6 +1014,7 @@ export const Navbar = () => {
           display: flex;
           align-items: center;
           justify-content: center;
+          border: 1.5px solid #FFFFFF;
         }
 
         .account-link-btn {
@@ -872,6 +1029,7 @@ export const Navbar = () => {
           font-size: 0.85rem;
           font-weight: 600;
           transition: var(--transition);
+          flex-shrink: 0;
         }
 
         .account-link-btn:hover {
@@ -880,57 +1038,168 @@ export const Navbar = () => {
           color: var(--primary);
         }
 
-        @media (max-width: 600px) {
-          .account-text-label {
-            display: none;
-          }
-          .account-link-btn {
-            padding: 8px;
-            border-radius: 50%;
-          }
-        }
-
-        .mobile-menu-toggle {
-          color: var(--text);
-          padding: 6px;
+        .account-avatar-dot {
+          width: 30px;
+          height: 30px;
+          border-radius: 50%;
+          background-color: #C5A97A;
+          color: #FFFFFF;
           display: flex;
           align-items: center;
           justify-content: center;
-          background: none;
-          border: none;
+          font-weight: 700;
+          font-size: 0.88rem;
+          flex-shrink: 0;
+        }
+
+        @media (max-width: 768px) {
+          .account-text-label {
+            display: none !important;
+          }
+          .account-link-btn {
+            padding: 0 !important;
+            width: 36px;
+            height: 36px;
+            justify-content: center;
+            border-radius: 50%;
+          }
+          .account-avatar-dot {
+            width: 28px;
+            height: 28px;
+            font-size: 0.82rem;
+          }
+          .action-icon-btn {
+            width: 36px;
+            height: 36px;
+          }
+          .nav-logout-btn {
+            display: none !important;
+          }
+        }
+
+        @media (max-width: 480px) {
+          .action-icon-btn {
+            width: 32px;
+            height: 32px;
+          }
+          .account-link-btn {
+            width: 32px;
+            height: 32px;
+          }
+          .account-avatar-dot {
+            width: 26px;
+            height: 26px;
+            font-size: 0.78rem;
+          }
+          .nav-badge-count {
+            top: -3px;
+            right: -3px;
+            width: 15px;
+            height: 15px;
+            font-size: 0.6rem;
+          }
+        }
+
+        @media (max-width: 360px) {
+          .action-icon-btn,
+          .account-link-btn,
+          .mobile-menu-toggle {
+            width: 29px !important;
+            height: 29px !important;
+          }
+          .account-avatar-dot {
+            width: 22px !important;
+            height: 22px !important;
+            font-size: 0.7rem !important;
+          }
+        }
+
+        /* Mobile Hamburger Toggle */
+        .mobile-menu-toggle {
+          display: none;
+          align-items: center;
+          justify-content: center;
+          width: 40px;
+          height: 40px;
+          border-radius: 50%;
+          background: rgba(255, 255, 255, 0.75);
+          border: 1px solid rgba(220, 210, 200, 0.7);
+          color: var(--text);
           cursor: pointer;
+          transition: var(--transition);
+          flex-shrink: 0;
+          box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+        }
+
+        .mobile-menu-toggle:hover,
+        .mobile-menu-toggle.open {
+          background-color: #FFFFFF;
+          border-color: var(--primary);
+          color: var(--primary);
+        }
+
+        @media (max-width: 959px) {
+          .mobile-menu-toggle {
+            display: flex !important;
+          }
+        }
+
+        @media (max-width: 768px) {
+          .mobile-menu-toggle {
+            width: 36px;
+            height: 36px;
+          }
+        }
+
+        @media (max-width: 480px) {
+          .mobile-menu-toggle {
+            width: 32px;
+            height: 32px;
+          }
         }
 
         /* Expandable search bar */
         .search-expand-bar {
-          background-color: rgba(255, 255, 255, 0.76);
-          backdrop-filter: blur(16px) saturate(140%);
-          -webkit-backdrop-filter: blur(16px) saturate(140%);
+          background-color: rgba(255, 255, 255, 0.92);
+          backdrop-filter: blur(18px) saturate(140%);
+          -webkit-backdrop-filter: blur(18px) saturate(140%);
           border-top: 1px solid rgba(255, 255, 255, 0.8);
           border-bottom: 1px solid rgba(236, 227, 215, 0.8);
-          padding: 0.85rem 0;
+          padding: 0.75rem 0;
           box-shadow: 0 8px 24px rgba(0,0,0,0.06);
         }
 
         .search-form-box {
           display: flex;
           align-items: center;
-          gap: 0.75rem;
+          gap: 0.5rem;
           max-width: 680px;
-          background-color: var(--card-bg);
-          border: 1px solid var(--border);
+          background-color: #FFFFFF;
+          border: 1.5px solid var(--border);
           border-radius: var(--radius-full);
           padding: 4px 6px;
+          box-shadow: 0 4px 12px rgba(0,0,0,0.04);
         }
 
         .search-input-field {
           flex: 1;
+          min-width: 0;
           border: none;
           background: transparent;
           font-size: 0.92rem;
           color: var(--text);
           padding: 0.4rem 0.5rem;
           outline: none;
+        }
+
+        @media (max-width: 480px) {
+          .search-input-field {
+            font-size: 0.85rem;
+          }
+          .search-submit-btn {
+            padding: 0.35rem 0.85rem !important;
+            font-size: 0.82rem !important;
+          }
         }
 
         .search-close-btn {
@@ -940,42 +1209,109 @@ export const Navbar = () => {
           background: none;
           border: none;
           cursor: pointer;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+
+        /* Mobile Backdrop Overlay */
+        .mobile-drawer-backdrop {
+          position: fixed;
+          top: 75px;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          background-color: rgba(0, 0, 0, 0.45);
+          backdrop-filter: blur(4px);
+          -webkit-backdrop-filter: blur(4px);
+          z-index: 998;
+        }
+
+        @media (max-width: 768px) {
+          .mobile-drawer-backdrop {
+            top: 65px;
+          }
+        }
+
+        @media (max-width: 480px) {
+          .mobile-drawer-backdrop {
+            top: 60px;
+          }
         }
 
         /* Mobile Drawer */
         .mobile-drawer {
-          background-color: rgba(255, 255, 255, 0.92);
-          backdrop-filter: blur(20px) saturate(140%);
-          -webkit-backdrop-filter: blur(20px) saturate(140%);
-          border-top: 1px solid rgba(255, 255, 255, 0.8);
-          box-shadow: 0 16px 36px rgba(0,0,0,0.12);
-          max-height: 80vh;
+          position: absolute;
+          top: 100%;
+          left: 0;
+          width: 100%;
+          max-height: calc(100vh - 75px);
           overflow-y: auto;
+          overscroll-behavior: contain;
+          -webkit-overflow-scrolling: touch;
+          background-color: rgba(255, 255, 255, 0.97);
+          backdrop-filter: blur(24px) saturate(150%);
+          -webkit-backdrop-filter: blur(24px) saturate(150%);
+          border-top: 1px solid rgba(236, 227, 215, 0.9);
+          border-bottom: 1px solid rgba(236, 227, 215, 0.9);
+          box-shadow: 0 16px 36px rgba(28, 55, 40, 0.16);
+          z-index: 999;
+        }
+
+        @media (max-width: 768px) {
+          .mobile-drawer {
+            max-height: calc(100vh - 65px);
+          }
+        }
+
+        @media (max-width: 480px) {
+          .mobile-drawer {
+            max-height: calc(100vh - 60px);
+          }
         }
 
         .mobile-drawer-inner {
-          padding: 1.25rem 1rem 2rem;
+          padding: 1rem 0.85rem 2.25rem;
           display: flex;
           flex-direction: column;
-          gap: 0.4rem;
+          gap: 0.35rem;
         }
 
         .mobile-nav-link {
-          padding: 0.7rem 0.85rem;
-          font-weight: 500;
-          font-size: 0.95rem;
+          padding: 0.75rem 1rem;
+          font-weight: 550;
+          font-size: 0.96rem;
           color: var(--text);
           border-radius: var(--radius-sm);
           transition: var(--transition);
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
         }
 
-        .mobile-nav-link:hover {
-          background-color: var(--card-bg);
+        .mobile-link-arrow {
+          color: var(--text-muted);
+          font-size: 0.88rem;
+          transition: transform 0.2s ease;
+        }
+
+        .mobile-nav-link:hover,
+        .mobile-nav-link.active {
+          background-color: rgba(28, 55, 40, 0.06);
+          color: var(--primary);
+        }
+
+        .mobile-nav-link:hover .mobile-link-arrow {
+          transform: translateX(3px);
           color: var(--primary);
         }
 
         .mobile-accordion-section {
           border-radius: var(--radius-sm);
+          background: rgba(251, 248, 243, 0.65);
+          border: 1px solid rgba(236, 227, 215, 0.75);
+          overflow: hidden;
+          margin-bottom: 0.25rem;
         }
 
         .mobile-accordion-header {
@@ -983,14 +1319,18 @@ export const Navbar = () => {
           display: flex;
           align-items: center;
           justify-content: space-between;
-          padding: 0.7rem 0.85rem;
+          padding: 0.75rem 1rem;
           font-size: 0.95rem;
-          font-weight: 500;
+          font-weight: 600;
           color: var(--text);
           background: none;
           border: none;
           text-align: left;
           cursor: pointer;
+        }
+
+        .mobile-accordion-header:hover {
+          color: var(--primary);
         }
 
         .accordion-caret {
@@ -1004,10 +1344,20 @@ export const Navbar = () => {
         }
 
         .mobile-accordion-body {
-          padding: 0.4rem 0.5rem 0.8rem 1.75rem;
-          display: flex;
-          flex-direction: column;
-          gap: 0.45rem;
+          padding: 0.5rem 1rem 0.9rem;
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: 0.45rem 0.75rem;
+          border-top: 1px dashed rgba(236, 227, 215, 0.9);
+          background: rgba(255, 255, 255, 0.75);
+        }
+
+        .mobile-accordion-body .mobile-sublink.highlight {
+          grid-column: 1 / -1;
+          padding-bottom: 0.4rem;
+          border-bottom: 1px solid rgba(236, 227, 215, 0.6);
+          font-weight: 700;
+          color: var(--primary);
         }
 
         .mobile-sublink {
@@ -1015,11 +1365,10 @@ export const Navbar = () => {
           color: var(--text-muted);
           padding: 0.35rem 0;
           transition: var(--transition);
-        }
-
-        .mobile-sublink.highlight {
-          color: var(--primary);
-          font-weight: 600;
+          display: inline-block;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
         }
 
         .mobile-sublink:hover {

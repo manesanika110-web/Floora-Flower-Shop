@@ -242,6 +242,7 @@ export const ProfilePage = ({ onShowToast }) => {
         src="/profile_flower_tl.png"
         alt=""
         aria-hidden="true"
+        className="profile-corner-flower"
         style={{
           position: 'absolute',
           top: 0,
@@ -258,6 +259,7 @@ export const ProfilePage = ({ onShowToast }) => {
         src="/profile_flower_tr.png"
         alt=""
         aria-hidden="true"
+        className="profile-corner-flower"
         style={{
           position: 'absolute',
           top: 0,
@@ -1843,6 +1845,27 @@ export const ProfilePage = ({ onShowToast }) => {
           </div>
         </div>
       )}
+
+      <style>{`
+        @media (max-width: 640px) {
+          .profile-corner-flower {
+            display: none !important;
+          }
+        }
+        @media (max-width: 480px) {
+          .profile-field-row {
+            flex-direction: column !important;
+            align-items: flex-start !important;
+            gap: 0.45rem !important;
+          }
+          .profile-field-row > span {
+            width: 100% !important;
+          }
+          .profile-field-row > div {
+            width: 100% !important;
+          }
+        }
+      `}</style>
 
     </div>
   );

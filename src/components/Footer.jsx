@@ -215,6 +215,13 @@ export const Footer = () => {
             gap: 1.5rem 1rem !important;
           }
         }
+
+        @media (max-width: 380px) {
+          .footer-compact-grid {
+            grid-template-columns: 1fr !important;
+            gap: 1.5rem !important;
+          }
+        }
       `}</style>
     </footer>
   );

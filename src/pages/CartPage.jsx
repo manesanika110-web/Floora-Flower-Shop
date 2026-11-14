@@ -88,7 +88,7 @@ export const CartPage = ({ onShowToast }) => {
   return (
     <div className="container animate-fade-in" style={{ padding: '3rem 1.5rem 5rem' }}>
       
-      <h1 className="font-serif" style={{ fontSize: '2.5rem', marginBottom: '2rem' }}>
+      <h1 className="font-serif cart-page-title" style={{ fontSize: '2.5rem', marginBottom: '2rem' }}>
         Shopping Cart ({cart.length} {cart.length === 1 ? 'item' : 'items'})
       </h1>
 
@@ -137,25 +137,23 @@ export const CartPage = ({ onShowToast }) => {
             {cart.map(item => (
               <div 
                 key={item.id} 
+                className="cart-item-card"
                 style={{
                   backgroundColor: 'var(--surface)',
                   borderRadius: 'var(--radius-md)',
                   padding: '1.25rem',
                   border: '1px solid var(--border-light)',
-                  boxShadow: 'var(--shadow-sm)',
-                  display: 'grid',
-                  gridTemplateColumns: '100px 1fr auto',
-                  gap: '1.25rem',
-                  alignItems: 'center'
+                  boxShadow: 'var(--shadow-sm)'
                 }}
               >
                 {/* Real photo thumbnail */}
-                <div style={{
+                <div className="cart-item-img-box" style={{
                   width: '100px',
                   height: '100px',
                   borderRadius: 'var(--radius-sm)',
                   overflow: 'hidden',
-                  backgroundColor: 'var(--soft-rose)'
+                  backgroundColor: 'var(--soft-rose)',
+                  flexShrink: 0
                 }}>
                   <img 
                     src={item.product.image} 
@@ -165,7 +163,7 @@ export const CartPage = ({ onShowToast }) => {
                 </div>
 
                 {/* Meta details */}
-                <div>
+                <div className="cart-item-meta">
                   <span style={{ fontSize: '0.78rem', color: 'var(--sage-dark)', fontWeight: 600, textTransform: 'uppercase' }}>
                     {item.product.category}
                   </span>
@@ -190,7 +188,7 @@ export const CartPage = ({ onShowToast }) => {
                 </div>
 
                 {/* Actions: Quantity Stepper & Remove */}
-                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '0.75rem' }}>
+                <div className="cart-item-actions" style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '0.75rem' }}>
                   <div style={{
                     display: 'flex',
                     alignItems: 'center',
@@ -242,7 +240,7 @@ export const CartPage = ({ onShowToast }) => {
         </div>
 
         {/* Right Column: Order Summary & Coupon */}
-        <div style={{
+        <div className="cart-summary-box" style={{
           backgroundColor: 'var(--surface)',
           borderRadius: 'var(--radius-lg)',
           padding: '2rem',
@@ -355,6 +353,45 @@ export const CartPage = ({ onShowToast }) => {
         </div>
 
       </div>
+
+      <style>{`
+        .cart-item-card {
+          display: grid;
+          grid-template-columns: 100px 1fr auto;
+          gap: 1.25rem;
+          align-items: center;
+        }
+
+        @media (max-width: 640px) {
+          .cart-item-card {
+            grid-template-columns: 75px 1fr !important;
+            gap: 0.85rem !important;
+            padding: 1rem !important;
+          }
+          .cart-item-img-box {
+            width: 75px !important;
+            height: 75px !important;
+          }
+          .cart-item-actions {
+            grid-column: 1 / -1 !important;
+            flex-direction: row !important;
+            justify-content: space-between !important;
+            align-items: center !important;
+            padding-top: 0.75rem;
+            border-top: 1px dashed var(--border-light);
+            width: 100%;
+          }
+        }
+
+        @media (max-width: 480px) {
+          .cart-page-title {
+            font-size: 1.75rem !important;
+          }
+          .cart-summary-box {
+            padding: 1.25rem 1rem !important;
+          }
+        }
+      `}</style>
 
     </div>
   );

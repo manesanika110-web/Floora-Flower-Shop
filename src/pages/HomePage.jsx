@@ -159,13 +159,53 @@ export const HomePage = ({ onShowToast }) => {
   const [activeCategoryTab, setActiveCategoryTab] = useState('all');
   const [copiedCode, setCopiedCode] = useState(null);
   const [reviewSlide, setReviewSlide] = useState(0);
+  const [windowWidth, setWindowWidth] = useState(typeof window !== 'undefined' ? window.innerWidth : 1200);
+  const categoriesSliderRef = React.useRef(null);
+
+  const scrollCategories = (direction) => {
+    if (categoriesSliderRef.current) {
+      const scrollAmount = direction === 'left' ? -220 : 220;
+      categoriesSliderRef.current.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+    }
+  };
+
+  useEffect(() => {
+    const handleResize = () => setWindowWidth(window.innerWidth);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   const reviewsList = homeContent.reviewsSection?.reviews?.length > 0
     ? homeContent.reviewsSection.reviews
     : CUSTOMER_REVIEWS;
 
-  const reviewsPerPage = 3;
+  const reviewsPerPage = windowWidth <= 768 ? 1 : (windowWidth < 1024 ? 2 : 3);
   const totalReviewPages = Math.max(1, Math.ceil(reviewsList.length / reviewsPerPage));
+
+  const reviewTouchStartXRef = React.useRef(null);
+  const handleReviewTouchStart = (e) => {
+    if (e.touches && e.touches[0]) {
+      reviewTouchStartXRef.current = e.touches[0].clientX;
+    }
+  };
+  const handleReviewTouchEnd = (e) => {
+    if (reviewTouchStartXRef.current === null) return;
+    if (e.changedTouches && e.changedTouches[0]) {
+      const diffX = reviewTouchStartXRef.current - e.changedTouches[0].clientX;
+      if (diffX > 40) {
+        setReviewSlide(prev => (prev + 1) % totalReviewPages);
+      } else if (diffX < -40) {
+        setReviewSlide(prev => (prev - 1 + totalReviewPages) % totalReviewPages);
+      }
+    }
+    reviewTouchStartXRef.current = null;
+  };
+
+  useEffect(() => {
+    if (reviewSlide >= totalReviewPages) {
+      setReviewSlide(0);
+    }
+  }, [totalReviewPages, reviewSlide]);
 
   // Auto-slide based on admin configured interval and autoPlay toggle
   useEffect(() => {
@@ -410,7 +450,7 @@ export const HomePage = ({ onShowToast }) => {
 
           @media (max-width: 768px) {
             .hero-banner-section {
-              padding-top: 65px !important;
+              padding-top: 60px !important;
             }
             .hero-slider-link {
               height: calc(100vw * 0.56);
@@ -423,6 +463,9 @@ export const HomePage = ({ onShowToast }) => {
           }
 
           @media (max-width: 480px) {
+            .hero-banner-section {
+              padding-top: 56px !important;
+            }
             .hero-slider-link {
               height: calc(100vw * 0.6);
               max-height: 260px;
@@ -441,41 +484,70 @@ export const HomePage = ({ onShowToast }) => {
           {/* ================= 1. REPEATING FLORAL SECTION: CATEGORIES TO SPECIAL OFFERS ================= */}
       <div className="home-floral-bg-section">
 
-      {/* ================= 2. CATEGORY TILES (EXACT REFERENCE DESIGN: 1ST ROW: 5, 2ND ROW: 5) ================= */}
+      {/* ================= 2. CATEGORY TILES (SLIDER ON MOBILE, 5x2 GRID ON DESKTOP) ================= */}
       <section className="categories-grid-section" style={{ padding: '3.5rem 0 3rem' }}>
         <div className="container">
-          <div className="categories-reference-grid">
-            {categoriesList.map(cat => {
-              const flowerImg = CATEGORY_IMAGE_MAP[cat.id?.toLowerCase()] || 
-                                CATEGORY_IMAGE_MAP[cat.name?.toLowerCase()] || 
-                                cat.image;
-              return (
-                <Link
-                  key={cat.id}
-                  to={`/shop?category=${encodeURIComponent(cat.name)}`}
-                  className="category-ref-card"
-                >
-                  <div className="category-ref-flower-wrap">
-                    <img
-                      src={flowerImg}
-                      alt={cat.name}
-                      className="category-ref-flower-img"
-                      loading="lazy"
-                    />
-                  </div>
-                  <div className="category-ref-bottom">
-                    <span className="category-ref-title font-serif">{cat.name}</span>
-                    <span className="category-ref-arrow-btn" aria-hidden="true">
-                      <ArrowRight size={13} color="#2D2520" strokeWidth={2.4} />
-                    </span>
-                  </div>
-                </Link>
-              );
-            })}
+          <div className="categories-slider-wrapper">
+            <button
+              type="button"
+              onClick={() => scrollCategories('left')}
+              className="categories-slider-nav-btn prev"
+              aria-label="Scroll categories left"
+            >
+              <ChevronLeft size={18} />
+            </button>
+
+            <div className="categories-reference-grid" ref={categoriesSliderRef}>
+              {categoriesList.map(cat => {
+                const flowerImg = CATEGORY_IMAGE_MAP[cat.id?.toLowerCase()] || 
+                                  CATEGORY_IMAGE_MAP[cat.name?.toLowerCase()] || 
+                                  cat.image;
+                return (
+                  <Link
+                    key={cat.id}
+                    to={`/shop?category=${encodeURIComponent(cat.name)}`}
+                    className="category-ref-card"
+                  >
+                    <div className="category-ref-flower-wrap">
+                      <img
+                        src={flowerImg}
+                        alt={cat.name}
+                        className="category-ref-flower-img"
+                        loading="lazy"
+                      />
+                    </div>
+                    <div className="category-ref-bottom">
+                      <span className="category-ref-title font-serif">{cat.name}</span>
+                      <span className="category-ref-arrow-btn" aria-hidden="true">
+                        <ArrowRight size={13} color="#2D2520" strokeWidth={2.4} />
+                      </span>
+                    </div>
+                  </Link>
+                );
+              })}
+            </div>
+
+            <button
+              type="button"
+              onClick={() => scrollCategories('right')}
+              className="categories-slider-nav-btn next"
+              aria-label="Scroll categories right"
+            >
+              <ChevronRight size={18} />
+            </button>
           </div>
         </div>
 
         <style>{`
+          .categories-slider-wrapper {
+            position: relative;
+            width: 100%;
+          }
+
+          .categories-slider-nav-btn {
+            display: none !important;
+          }
+
           .categories-reference-grid {
             display: grid;
             grid-template-columns: repeat(5, 1fr);
@@ -601,26 +673,113 @@ export const HomePage = ({ onShowToast }) => {
           }
 
           @media (max-width: 768px) {
+            .categories-slider-wrapper {
+              display: flex;
+              align-items: center;
+              position: relative;
+              width: 100%;
+            }
+
+            .categories-slider-nav-btn {
+              display: flex !important;
+              align-items: center;
+              justify-content: center;
+              width: 32px;
+              height: 32px;
+              border-radius: 50%;
+              background: rgba(255, 255, 255, 0.95);
+              border: 1.5px solid #D5CEC4;
+              color: #1C3728;
+              box-shadow: 0 4px 12px rgba(0, 0, 0, 0.14);
+              cursor: pointer;
+              z-index: 5;
+              flex-shrink: 0;
+              transition: all 0.2s ease;
+              position: absolute;
+              top: 50%;
+              transform: translateY(-50%);
+            }
+
+            .categories-slider-nav-btn:hover {
+              background: #1C3728;
+              color: #FFFFFF;
+              border-color: #1C3728;
+            }
+
+            .categories-slider-nav-btn.prev {
+              left: -10px;
+            }
+
+            .categories-slider-nav-btn.next {
+              right: -10px;
+            }
+
             .categories-reference-grid {
-              grid-template-columns: repeat(3, 1fr);
-              gap: 0.75rem;
+              display: flex !important;
+              flex-direction: row !important;
+              overflow-x: auto !important;
+              scroll-snap-type: x mandatory !important;
+              -webkit-overflow-scrolling: touch !important;
+              scroll-behavior: smooth !important;
+              gap: 0.85rem !important;
+              padding: 0.4rem 0.25rem 0.85rem !important;
+              width: 100% !important;
+              scrollbar-width: none !important;
+              -ms-overflow-style: none !important;
+            }
+
+            .categories-reference-grid::-webkit-scrollbar {
+              display: none !important;
+            }
+
+            .category-ref-card {
+              flex: 0 0 145px !important;
+              width: 145px !important;
+              min-width: 145px !important;
+              max-width: 145px !important;
+              scroll-snap-align: start !important;
+              min-height: 142px !important;
+              padding: 0.75rem 0.8rem 0.7rem !important;
+            }
+
+            .category-ref-flower-wrap {
+              height: 85px !important;
+            }
+
+            .category-ref-title {
+              font-size: 0.88rem !important;
             }
           }
 
-          @media (max-width: 520px) {
-            .categories-reference-grid {
-              grid-template-columns: repeat(2, 1fr);
-              gap: 0.65rem;
-            }
-            .category-ref-title {
-              font-size: 0.88rem;
-            }
-            .category-ref-flower-wrap {
-              height: 82px;
-            }
+          @media (max-width: 480px) {
             .category-ref-card {
-              min-height: 132px;
-              padding: 0.65rem 0.75rem;
+              flex: 0 0 135px !important;
+              width: 135px !important;
+              min-width: 135px !important;
+              max-width: 135px !important;
+              min-height: 132px !important;
+              padding: 0.65rem 0.7rem 0.6rem !important;
+            }
+
+            .category-ref-flower-wrap {
+              height: 78px !important;
+            }
+
+            .category-ref-title {
+              font-size: 0.84rem !important;
+            }
+
+            .categories-slider-nav-btn {
+              width: 28px !important;
+              height: 28px !important;
+            }
+
+            .categories-slider-nav-btn.prev {
+              left: -6px !important;
+            }
+
+            .categories-slider-nav-btn.next {
+              right: -6px !important;
             }
           }
         `}</style>
@@ -1014,40 +1173,39 @@ export const HomePage = ({ onShowToast }) => {
           {/* ================= 5. CUSTOMER REVIEWS SECTION ================= */}
           <div style={{ paddingTop: '1.5rem' }}>
             {/* Header */}
-          <div style={{ marginBottom: '1.5rem' }}>
-            <h2 className="font-serif" style={{ fontSize: '1.9rem', fontWeight: 700, color: 'var(--text)', marginBottom: '0.35rem' }}>
+          <div className="reviews-header-block" style={{ marginBottom: '1.5rem' }}>
+            <h2 className="font-serif reviews-section-title" style={{ fontSize: '1.9rem', fontWeight: 700, color: 'var(--text)', marginBottom: '0.35rem' }}>
               {homeContent.reviewsSection?.sectionTitle || 'Customer Reviews'}
             </h2>
-            <p style={{ fontSize: '0.9rem', color: 'var(--text-muted)', margin: 0 }}>
+            <p className="reviews-section-sub" style={{ fontSize: '0.9rem', color: 'var(--text-muted)', margin: 0 }}>
               {homeContent.reviewsSection?.sectionSubtitle || '(Rated 4.8/5 based on 14887 ratings)'}
             </p>
-            <p style={{ fontSize: '0.9rem', fontWeight: 600, color: 'var(--text)', margin: '0.1rem 0 0' }}>
+            <p className="reviews-section-tagline" style={{ fontSize: '0.9rem', fontWeight: 600, color: 'var(--text)', margin: '0.1rem 0 0' }}>
               Loved by Many
             </p>
           </div>
 
           {/* Carousel Wrapper */}
-          <div style={{ position: 'relative', display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+          <div className="reviews-carousel-wrapper" style={{ position: 'relative', display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
 
             {/* Left Arrow */}
             <button
               type="button"
               onClick={() => setReviewSlide(prev => (prev - 1 + totalReviewPages) % totalReviewPages)}
-              className="review-nav-btn"
+              className="review-nav-btn review-nav-prev"
               aria-label="Previous reviews"
             >
               <ChevronLeft size={20} />
             </button>
 
             {/* Cards Stage */}
-            <div style={{ flex: 1, overflow: 'visible', padding: '6px 2px' }}>
+            <div
+              className="reviews-viewport"
+              style={{ flex: 1, overflow: 'visible', padding: '6px 2px' }}
+              onTouchStart={handleReviewTouchStart}
+              onTouchEnd={handleReviewTouchEnd}
+            >
               <div
-                style={{
-                  display: 'grid',
-                  gridTemplateColumns: 'repeat(3, 1fr)',
-                  gap: '1.25rem',
-                  transition: 'opacity 0.4s ease'
-                }}
                 className="reviews-grid"
               >
                 {reviewsList.slice(
@@ -1055,52 +1213,39 @@ export const HomePage = ({ onShowToast }) => {
                   reviewSlide * reviewsPerPage + reviewsPerPage
                 ).map(review => (
                   <div key={review.id} className="review-card">
-                    {/* Product thumbnail + stars + date */}
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.9rem' }}>
+                    {/* Product thumbnail / avatar + stars + date */}
+                    <div className="review-card-top">
                       <img
                         src={review.image}
                         alt={review.name}
-                        style={{
-                          width: '56px',
-                          height: '56px',
-                          objectFit: 'cover',
-                          borderRadius: '6px',
-                          border: '1px solid #E8DFD0',
-                          flexShrink: 0
-                        }}
+                        className="review-avatar-img"
                       />
-                      <div>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.3rem', marginBottom: '0.2rem' }}>
+                      <div className="review-rating-block">
+                        <div className="review-stars-row">
                           {[...Array(5)].map((_, i) => (
-                            <span key={i} style={{ color: i < review.rating ? '#E6A817' : '#D0C4B8', fontSize: '0.9rem' }}>★</span>
+                            <span key={i} className="review-star" style={{ color: i < review.rating ? '#E6A817' : '#D0C4B8' }}>★</span>
                           ))}
                         </div>
-                        <span style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>{review.date}</span>
+                        <span className="review-date-text">{review.date}</span>
                       </div>
                     </div>
 
                     {/* Open quote */}
-                    <span style={{ fontSize: '2.2rem', lineHeight: 1, color: '#1C3728', fontFamily: 'Georgia, serif', display: 'block', marginBottom: '0.3rem' }}>
+                    <span className="review-quote-mark review-quote-open">
                       &#x201C;
                     </span>
 
                     {/* Review text */}
-                    <p style={{
-                      fontSize: '0.9rem',
-                      color: 'var(--text)',
-                      lineHeight: 1.55,
-                      flex: 1,
-                      margin: '0 0 1rem'
-                    }}>
+                    <p className="review-body-text">
                       {review.text}
                     </p>
 
                     {/* Reviewer name + close quote */}
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginTop: 'auto' }}>
-                      <span style={{ fontSize: '0.82rem', fontWeight: 600, color: 'var(--text-muted)' }}>
+                    <div className="review-card-bottom">
+                      <span className="review-author-name">
                         -{review.name}
                       </span>
-                      <span style={{ fontSize: '2.2rem', lineHeight: 1, color: '#1C3728', fontFamily: 'Georgia, serif' }}>
+                      <span className="review-quote-mark review-quote-close">
                         &#x201D;
                       </span>
                     </div>
@@ -1113,7 +1258,7 @@ export const HomePage = ({ onShowToast }) => {
             <button
               type="button"
               onClick={() => setReviewSlide(prev => (prev + 1) % totalReviewPages)}
-              className="review-nav-btn"
+              className="review-nav-btn review-nav-next"
               aria-label="Next reviews"
             >
               <ChevronRight size={20} />
@@ -1246,11 +1391,15 @@ export const HomePage = ({ onShowToast }) => {
         @media (max-width: 1024px) {
           .cards-grid-4 {
             grid-template-columns: repeat(2, 1fr) !important;
-            gap: 1.25rem;
+            gap: 1.15rem;
           }
         }
 
         @media (max-width: 768px) {
+          .cards-grid-4 {
+            grid-template-columns: repeat(2, 1fr) !important;
+            gap: 0.85rem !important;
+          }
           .event-wedding-banner {
             padding: 2rem 1.5rem !important;
           }
@@ -1265,7 +1414,8 @@ export const HomePage = ({ onShowToast }) => {
 
         @media (max-width: 640px) {
           .cards-grid-4 {
-            grid-template-columns: 1fr !important;
+            grid-template-columns: repeat(2, 1fr) !important;
+            gap: 0.75rem !important;
           }
           .collection-row-header {
             flex-direction: column;
@@ -1280,6 +1430,30 @@ export const HomePage = ({ onShowToast }) => {
             margin-left: 0;
             font-size: 0.84rem;
             padding: 0.45rem 1rem;
+          }
+          .offer-card-item {
+            padding: 1.25rem 1rem !important;
+          }
+          .event-wedding-btn {
+            width: 100% !important;
+            justify-content: center !important;
+          }
+          .explore-all-btn {
+            width: 100% !important;
+            justify-content: center !important;
+          }
+        }
+
+        @media (max-width: 480px) {
+          .cards-grid-4 {
+            grid-template-columns: repeat(2, 1fr) !important;
+            gap: 0.55rem !important;
+          }
+          .event-wedding-banner {
+            padding: 1.5rem 1rem !important;
+          }
+          .event-wedding-banner h3 {
+            font-size: 1.2rem !important;
           }
         }
 
@@ -1296,6 +1470,47 @@ export const HomePage = ({ onShowToast }) => {
         }
 
         /* ========== CUSTOMER REVIEWS ========== */
+        .reviews-header-block {
+          margin-bottom: 1.5rem;
+        }
+        .reviews-section-title {
+          font-size: 1.9rem;
+          font-weight: 700;
+          color: var(--text);
+          margin-bottom: 0.35rem;
+        }
+        .reviews-section-sub {
+          font-size: 0.9rem;
+          color: var(--text-muted);
+          margin: 0;
+        }
+        .reviews-section-tagline {
+          font-size: 0.9rem;
+          fontWeight: 600;
+          color: var(--text);
+          margin: 0.1rem 0 0;
+        }
+
+        .reviews-carousel-wrapper {
+          position: relative;
+          display: flex;
+          align-items: center;
+          gap: 0.75rem;
+        }
+
+        .reviews-viewport {
+          flex: 1;
+          overflow: visible;
+          padding: 6px 2px;
+        }
+
+        .reviews-grid {
+          display: grid;
+          grid-template-columns: repeat(3, 1fr);
+          gap: 1.25rem;
+          transition: opacity 0.4s ease;
+        }
+
         .review-nav-btn {
           display: flex;
           align-items: center;
@@ -1340,18 +1555,235 @@ export const HomePage = ({ onShowToast }) => {
           transform: translateY(-4px);
         }
 
-        @media (max-width: 900px) {
+        .review-card-top {
+          display: flex;
+          align-items: center;
+          gap: 0.75rem;
+          margin-bottom: 0.9rem;
+        }
+        .review-avatar-img {
+          width: 56px;
+          height: 56px;
+          object-fit: cover;
+          border-radius: 6px;
+          border: 1px solid #E8DFD0;
+          flex-shrink: 0;
+        }
+        .review-rating-block {
+          display: flex;
+          flex-direction: column;
+        }
+        .review-stars-row {
+          display: flex;
+          align-items: center;
+          gap: 0.3rem;
+          margin-bottom: 0.2rem;
+        }
+        .review-star {
+          font-size: 0.9rem;
+        }
+        .review-date-text {
+          font-size: 0.78rem;
+          color: var(--text-muted);
+        }
+        .review-quote-mark {
+          font-size: 2.2rem;
+          line-height: 1;
+          color: #1C3728;
+          font-family: Georgia, serif;
+          display: block;
+        }
+        .review-quote-open {
+          margin-bottom: 0.3rem;
+        }
+        .review-body-text {
+          font-size: 0.9rem;
+          color: var(--text);
+          line-height: 1.55;
+          flex: 1;
+          margin: 0 0 1rem;
+        }
+        .review-card-bottom {
+          display: flex;
+          justify-content: space-between;
+          align-items: flex-end;
+          margin-top: auto;
+        }
+        .review-author-name {
+          font-size: 0.82rem;
+          font-weight: 600;
+          color: var(--text-muted);
+        }
+
+        @media (min-width: 769px) and (max-width: 1024px) {
           .reviews-grid {
             grid-template-columns: repeat(2, 1fr) !important;
           }
         }
-        @media (max-width: 580px) {
+
+        /* Mobile View - Exactly matching reference sketch */
+        @media (max-width: 768px) {
+          .reviews-header-block {
+            text-align: center !important;
+            margin-bottom: 1.25rem !important;
+          }
+          .reviews-section-title {
+            font-size: 1.6rem !important;
+            text-align: center !important;
+            margin-bottom: 0.25rem !important;
+          }
+          .reviews-section-sub {
+            text-align: center !important;
+            font-size: 0.85rem !important;
+          }
+          .reviews-section-tagline {
+            text-align: center !important;
+            font-size: 0.88rem !important;
+          }
+
+          .reviews-carousel-wrapper {
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            gap: 0.65rem !important;
+            width: 100% !important;
+            padding: 0 0.25rem !important;
+            box-sizing: border-box !important;
+          }
+
+          .reviews-viewport {
+            flex: 1 !important;
+            max-width: 320px !important;
+            margin: 0 auto !important;
+            overflow: visible !important;
+            padding: 8px 4px !important;
+            box-sizing: border-box !important;
+          }
+
           .reviews-grid {
             grid-template-columns: 1fr !important;
+            gap: 0 !important;
+            width: 100% !important;
+          }
+
+          .review-card {
+            display: flex !important;
+            flex-direction: column !important;
+            align-items: center !important;
+            text-align: center !important;
+            padding: 1.6rem 1.35rem 1.4rem !important;
+            border-radius: 18px !important;
+            background: #FFFFFF !important;
+            border: 1.5px solid rgba(200, 169, 110, 0.75) !important;
+            box-shadow: 0 10px 28px rgba(45, 37, 32, 0.08), 0 2px 6px rgba(0,0,0,0.04) !important;
+            min-height: auto !important;
+            width: 100% !important;
+            box-sizing: border-box !important;
+          }
+
+          .review-card-top {
+            flex-direction: column !important;
+            align-items: center !important;
+            justify-content: center !important;
+            gap: 0.55rem !important;
+            margin-bottom: 0.75rem !important;
+            width: 100% !important;
+          }
+
+          .review-avatar-img {
+            width: 68px !important;
+            height: 68px !important;
+            border-radius: 50% !important;
+            object-fit: cover !important;
+            border: 2.5px solid #C89B59 !important;
+            box-shadow: 0 4px 14px rgba(200, 155, 89, 0.25) !important;
+            margin: 0 auto !important;
+            display: block !important;
+          }
+
+          .review-rating-block {
+            align-items: center !important;
+            justify-content: center !important;
+          }
+
+          .review-stars-row {
+            justify-content: center !important;
+            gap: 0.3rem !important;
+            margin-bottom: 0.2rem !important;
+          }
+
+          .review-star {
+            font-size: 1.25rem !important;
+            color: #E6A817 !important;
+          }
+
+          .review-date-text {
+            font-size: 0.78rem !important;
+            color: var(--text-muted) !important;
+            text-align: center !important;
+            display: block !important;
+          }
+
+          .review-quote-mark {
+            display: none !important;
+          }
+
+          .review-body-text {
+            font-size: 0.94rem !important;
+            line-height: 1.6 !important;
+            color: #2D3748 !important;
+            font-style: italic !important;
+            text-align: center !important;
+            margin: 0.2rem 0 0.85rem !important;
+            flex: none !important;
+          }
+
+          .review-card-bottom {
+            display: flex !important;
+            flex-direction: column !important;
+            align-items: center !important;
+            justify-content: center !important;
+            margin-top: 0 !important;
+            width: 100% !important;
+          }
+
+          .review-author-name {
+            font-size: 0.88rem !important;
+            font-weight: 700 !important;
+            color: #1C3728 !important;
+            text-transform: uppercase !important;
+            letter-spacing: 0.04em !important;
+            text-align: center !important;
+          }
+
+          .review-nav-btn {
+            width: 38px !important;
+            height: 38px !important;
+            background: #FFFFFF !important;
+            border: 1.5px solid #C8B89A !important;
+            color: #1C3728 !important;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.08) !important;
+            flex-shrink: 0 !important;
+          }
+        }
+
+        @media (max-width: 420px) {
+          .reviews-carousel-wrapper {
+            gap: 0.35rem !important;
+          }
+          .reviews-viewport {
+            max-width: 260px !important;
           }
           .review-nav-btn {
-            width: 36px;
-            height: 36px;
+            width: 34px !important;
+            height: 34px !important;
+          }
+          .review-avatar-img {
+            width: 60px !important;
+            height: 60px !important;
+          }
+          .review-card {
+            padding: 1.35rem 0.95rem 1.25rem !important;
           }
         }
       `}</style>

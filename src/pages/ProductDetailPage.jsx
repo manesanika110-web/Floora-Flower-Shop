@@ -443,7 +443,7 @@ export const ProductDetailPage = ({ onShowToast }) => {
               <button
                 type="button"
                 onClick={handleAddToCart}
-                className={isCartBouncing ? 'cart-bounce-anim' : ''}
+                className={`pdp-cta-btn ${isCartBouncing ? 'cart-bounce-anim' : ''}`}
                 style={{
                   flex: 1,
                   height: '42px',
@@ -465,6 +465,7 @@ export const ProductDetailPage = ({ onShowToast }) => {
               <button
                 type="button"
                 onClick={handleBuyNow}
+                className="pdp-cta-btn"
                 style={{
                   flex: 1,
                   height: '42px',
@@ -489,6 +490,7 @@ export const ProductDetailPage = ({ onShowToast }) => {
                   toggleWishlist(product.id);
                   if (onShowToast) onShowToast(isFavorited ? 'Removed from wishlist' : 'Saved to wishlist! 💖');
                 }}
+                className="pdp-wishlist-btn"
                 style={{
                   width: '42px',
                   height: '42px',
@@ -678,14 +680,19 @@ export const ProductDetailPage = ({ onShowToast }) => {
             overflow-x: auto !important;
             padding-bottom: 4px;
           }
+          .pdp-thumbnails-strip button {
+            flex-shrink: 0;
+          }
           .pdp-action-row {
             flex-wrap: wrap !important;
+            gap: 0.65rem !important;
           }
-          .pdp-action-row button {
-            min-width: 120px;
+          .pdp-action-row .pdp-cta-btn {
+            flex: 1 1 calc(50% - 0.5rem) !important;
+            min-width: 110px !important;
           }
           .pdp-main-image-box {
-            height: 300px !important;
+            height: 280px !important;
           }
         }
       `}</style>
