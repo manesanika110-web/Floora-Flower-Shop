@@ -1,0 +1,891 @@
+/* ==========================================================================
+   FLOORA - EXACT MOCKUP COLOR THEME & DESIGN SYSTEM
+   Palette extracted from provided UI design:
+   - Background: Warm Cream/Ivory #FBF8F3 / #FAF5EE
+   - Card Surface: #FFFFFF & #F8F3EB
+   - Primary Accent: Deep Forest Evergreen #1C3728
+   - Secondary / Blush: #E88EAA / #E6B4BE
+   - Gold Accent: #C89B59 / #F4B942
+   - Text Primary: #2D2520
+   - Text Muted: #7E736B
+   - Borders: #ECE3D7
+   - Footer: Luxury Dark Forest #16281E
+   ========================================================================== */
+
+:root {
+  --bg: #FBF8F3;
+  --bg-warm: #FAF5EE;
+  --bg-card: #FFFFFF;
+  --bg-card-soft: #F8F3EB;
+  --surface: #FFFFFF;
+
+  --primary: #1C3728;
+  /* Deep Forest Green from mockup buttons */
+  --primary-hover: #274C37;
+  --primary-light: #EBF2EC;
+
+  --blush: #E88EAA;
+  --blush-soft: #F7E1E8;
+  --gold: #C89B59;
+  --gold-light: #FDF4E5;
+
+  --text: #2D2520;
+  /* Deep Warm Espresso text */
+  --text-muted: #7E736B;
+  --border: #ECE3D7;
+  --border-light: #F2ECE2;
+
+  --footer-bg: #FFFFFF;
+  /* White Footer */
+  --footer-text: #1C3728;
+  --footer-muted: #2E523A;
+
+  --shadow-sm: 0 4px 12px rgba(45, 37, 32, 0.04);
+  --shadow-card: 0 8px 24px rgba(45, 37, 32, 0.06);
+  --shadow-hover: 0 16px 36px rgba(45, 37, 32, 0.12);
+
+  --font-serif: 'Playfair Display', Georgia, serif;
+  --font-sans: 'Poppins', -apple-system, BlinkMacSystemFont, sans-serif;
+
+  --radius-sm: 8px;
+  --radius-md: 14px;
+  --radius-lg: 20px;
+  --radius-full: 9999px;
+
+  --transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+  font-size: 16px;
+  accent-color: var(--primary);
+}
+
+body {
+  font-family: var(--font-sans);
+  background-color: #FAF7F2;
+  background-image: url('/backgrounds/floral_watercolor_section_bg.jpg');
+  background-attachment: fixed;
+  background-position: center center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  color: var(--text);
+  line-height: 1.6;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow-x: clip;
+}
+
+#root {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+main {
+  flex: 1;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+.font-serif {
+  font-family: var(--font-serif);
+  color: var(--text);
+  font-weight: 600;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+  transition: var(--transition);
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+  border: none;
+  background: none;
+  outline: none;
+  transition: var(--transition);
+}
+
+input,
+textarea,
+select {
+  font-family: inherit;
+  font-size: inherit;
+  color: inherit;
+  outline: none;
+}
+
+img {
+  display: block;
+  max-width: 100%;
+}
+
+.container {
+  width: 100%;
+  max-width: 1260px;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 1.5rem;
+  padding-right: 1.5rem;
+}
+
+/* Section Header Utility */
+.section-header {
+  margin-bottom: 2.5rem;
+}
+
+.section-subtitle {
+  display: inline-block;
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  color: var(--gold);
+  margin-bottom: 0.5rem;
+}
+
+.section-title {
+  font-size: clamp(2rem, 3.5vw, 2.75rem);
+  line-height: 1.2;
+  margin-bottom: 0.75rem;
+}
+
+.section-desc {
+  font-size: 1rem;
+  color: var(--text-muted);
+  max-width: 620px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Buttons from Mockup */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.6rem;
+  border-radius: var(--radius-full);
+  font-weight: 600;
+  font-size: 0.95rem;
+  transition: var(--transition);
+  text-align: center;
+  line-height: 1.2;
+}
+
+/* Primary Forest Green Button (From Mockup) */
+.btn-primary {
+  background-color: var(--primary);
+  color: #FFFFFF;
+  box-shadow: 0 4px 14px rgba(28, 55, 40, 0.25);
+}
+
+.btn-primary:hover {
+  background-color: var(--primary-hover);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(28, 55, 40, 0.35);
+  color: #FFFFFF;
+}
+
+/* Outline Pill Button */
+.btn-secondary {
+  background: transparent;
+  color: var(--primary);
+  border: 1.5px solid var(--primary);
+}
+
+.btn-secondary:hover {
+  background: var(--primary);
+  color: #FFFFFF;
+  transform: translateY(-2px);
+}
+
+/* Soft Cream Pill */
+.btn-soft {
+  background: var(--bg-card-soft);
+  color: var(--text);
+  border: 1px solid var(--border);
+}
+
+.btn-soft:hover {
+  border-color: var(--primary);
+  color: var(--primary);
+}
+
+.btn-sm {
+  padding: 0.45rem 1rem;
+  font-size: 0.85rem;
+}
+
+.btn-lg {
+  padding: 0.95rem 2.2rem;
+  font-size: 1.05rem;
+}
+
+/* Badges */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.25rem 0.65rem;
+  border-radius: var(--radius-full);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+.badge-discount {
+  background: var(--primary);
+  color: #FFFFFF;
+  font-size: 0.75rem;
+  font-weight: 700;
+  border-radius: 6px;
+  padding: 2px 7px;
+}
+
+.badge-green {
+  background: var(--primary-light);
+  color: var(--primary);
+}
+
+.badge-gold {
+  background: var(--gold-light);
+  color: var(--gold);
+}
+
+/* Product Card Matching Mockup */
+.product-card {
+  background: rgba(255, 255, 255, 0.56);
+  backdrop-filter: blur(14px) saturate(135%);
+  -webkit-backdrop-filter: blur(14px) saturate(135%);
+  border-radius: var(--radius-lg);
+  border: 1px solid rgba(255, 255, 255, 0.85);
+  overflow: hidden;
+  box-shadow: 0 8px 24px rgba(45, 37, 32, 0.05), inset 0 1px 1px rgba(255, 255, 255, 0.8);
+  transition: var(--transition);
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+.product-card:hover {
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(18px) saturate(150%);
+  -webkit-backdrop-filter: blur(18px) saturate(150%);
+  transform: translateY(-6px);
+  border-color: #D4AF37 !important;
+  box-shadow: 0 16px 36px rgba(212, 175, 55, 0.28), 0 6px 18px rgba(45, 37, 32, 0.08) !important;
+}
+
+.product-card-img-wrap {
+  position: relative;
+  height: 260px;
+  overflow: hidden;
+  background-color: rgba(255, 255, 255, 0.22);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.product-card-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+.product-card:hover .product-card-img {
+  transform: scale(1.08);
+}
+
+.product-wishlist-btn {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-muted);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+  transition: var(--transition);
+  z-index: 2;
+}
+
+.product-wishlist-btn:hover {
+  transform: scale(1.15);
+  color: #E03131;
+}
+
+.product-wishlist-btn.active {
+  color: #E03131;
+}
+
+.product-badge-float {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  z-index: 2;
+}
+
+.product-card-body {
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.product-card-title {
+  font-size: 1.15rem;
+  font-weight: 600;
+  line-height: 1.3;
+  margin-bottom: 0.4rem;
+  color: var(--text);
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.product-rating-row {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-bottom: 0.75rem;
+  font-size: 0.85rem;
+}
+
+.stars-gold {
+  color: #F4B942;
+  display: flex;
+  align-items: center;
+}
+
+.product-price-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-top: auto;
+  padding-top: 0.5rem;
+}
+
+.price-box {
+  display: flex;
+  align-items: baseline;
+  gap: 0.6rem;
+}
+
+.price-current {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.price-old {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  text-decoration: line-through;
+}
+
+.product-cart-btn-icon {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: var(--bg-card-soft);
+  border: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--primary);
+  transition: var(--transition);
+}
+
+.product-cart-btn-icon:hover {
+  background: rgba(253, 244, 229, 0.92) !important;
+  color: #9A6B21;
+  border-color: #B8860B !important;
+  transform: scale(1.08);
+}
+
+/* Category Tiles Matching Mockup */
+.category-tile-box {
+  background: var(--bg-card-soft);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 1rem 0.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 0.6rem;
+  transition: var(--transition);
+  cursor: pointer;
+}
+
+.category-tile-box:hover {
+  transform: translateY(-4px);
+  border-color: var(--primary);
+  box-shadow: var(--shadow-sm);
+  background: #FFFFFF;
+}
+
+.category-tile-thumb {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  object-fit: cover;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.06);
+}
+
+.category-tile-title {
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--text);
+}
+
+/* Forms */
+.form-group {
+  margin-bottom: 1.25rem;
+}
+
+.form-label {
+  display: block;
+  font-size: 0.88rem;
+  font-weight: 500;
+  margin-bottom: 0.4rem;
+  color: var(--text);
+}
+
+.form-input,
+.form-select,
+.form-textarea {
+  width: 100%;
+  padding: 0.75rem 1.1rem;
+  border-radius: var(--radius-sm);
+  border: 1.5px solid rgba(236, 227, 215, 0.9);
+  background: rgba(255, 255, 255, 0.65) !important;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  color: var(--text);
+  font-size: 0.95rem;
+  transition: var(--transition);
+}
+
+.form-input:focus,
+.form-select:focus,
+.form-textarea:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(28, 55, 40, 0.15);
+}
+
+/* Grid Layouts */
+.products-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
+  gap: 1.75rem;
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.4s ease forwards;
+}
+
+/* Responsive tweaks */
+@media (max-width: 768px) {
+  .section-title {
+    font-size: 1.85rem;
+  }
+
+  .products-grid {
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 1.25rem;
+  }
+
+  .product-card-img-wrap {
+    height: 200px;
+  }
+}
+
+/* ==========================================================================
+   FLORAL WATERCOLOR BACKGROUND DESIGN (Continuous & Navbar Pages)
+   Matches reference image with soft cream center, pastel watercolor washes,
+   and delicate botanical floral corner elements.
+   ========================================================================== */
+.floral-watercolor-bg {
+  background-color: #FAF6EE;
+  background-image: url('/backgrounds/floral_watercolor_bg.jpg');
+  background-position: center top;
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-attachment: fixed;
+  position: relative;
+  min-height: 85vh;
+}
+
+.home-floral-continuous-bg {
+  position: relative;
+  width: 100%;
+}
+
+@media (max-width: 768px) {
+  .floral-watercolor-bg {
+    background-attachment: scroll;
+    background-size: 100% auto;
+    background-repeat: repeat-y;
+  }
+}
+
+/* ==========================================================================
+   HOMEPAGE FIXED STATIONARY FLORAL BACKGROUND SYSTEM
+   Keeps the floral watercolor artwork 100% stationary/fixed in position
+   while all sections, cards, text, buttons and content smoothly scroll over it.
+   ========================================================================== */
+.home-floral-fixed-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+.home-fixed-floral-bg {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: #FAF7F2;
+  background-image: url('/backgrounds/floral_watercolor_section_bg.jpg');
+  background-position: center center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  z-index: 0;
+  pointer-events: none;
+  -webkit-transform: translateZ(0);
+  transform: translateZ(0);
+  will-change: transform;
+}
+
+.home-floral-scroll-content {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+}
+
+.home-floral-bg-section {
+  position: relative;
+  width: 100%;
+  margin: 0;
+  border: none !important;
+  box-shadow: none !important;
+  background-color: #FAF7F2;
+  background-image: url('/backgrounds/floral_watercolor_section_bg.jpg') !important;
+  background-position: center top;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+.home-floral-bg-section::before,
+.home-floral-bg-section::after {
+  display: none !important;
+}
+
+.hero-banner-section {
+  position: relative;
+  z-index: 2;
+  background-color: #FAF5EE;
+}
+
+/* ==========================================================================
+   GLOBAL COMPREHENSIVE MOBILE RESPONSIVENESS (All Mobile Screen Sizes)
+   Ensures 320px, 360px, 375px, 390px, 414px, 480px, 768px look flawless.
+   ========================================================================== */
+@media (max-width: 768px) {
+  html, body {
+    max-width: 100vw;
+    overflow-x: clip !important;
+  }
+
+  .container {
+    padding-left: 1.15rem;
+    padding-right: 1.15rem;
+    max-width: 100%;
+  }
+
+  .section-title {
+    font-size: 1.75rem;
+  }
+}
+
+@media (max-width: 480px) {
+  html, body {
+    font-size: 15px;
+  }
+
+  .container {
+    padding-left: 0.9rem;
+    padding-right: 0.9rem;
+  }
+
+  .section-title {
+    font-size: 1.5rem;
+  }
+
+  .section-subtitle {
+    font-size: 0.76rem;
+    letter-spacing: 1.2px;
+  }
+
+  .btn {
+    padding: 0.65rem 1.2rem;
+    font-size: 0.88rem;
+  }
+
+  .btn-lg {
+    padding: 0.8rem 1.6rem;
+    font-size: 0.95rem;
+  }
+
+  /* Force tables and code blocks to never break viewport */
+  table {
+    min-width: 520px;
+  }
+
+  /* Responsive image scaling */
+  img {
+    max-width: 100%;
+    height: auto;
+  }
+}
+
+/* ==========================================================================
+   PREMIUM FLOORA GLASSMORPHISM DESIGN SYSTEM (ACROSS ALL PAGES)
+   ========================================================================== */
+.glass-panel,
+.glass-card,
+.shop-filter-card,
+.cart-summary-box,
+.checkout-box-glass {
+  background: rgba(255, 255, 255, 0.58) !important;
+  backdrop-filter: blur(16px) saturate(140%) !important;
+  -webkit-backdrop-filter: blur(16px) saturate(140%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.88) !important;
+  box-shadow: 0 8px 30px rgba(45, 37, 32, 0.05), inset 0 1px 2px rgba(255, 255, 255, 0.9) !important;
+}
+
+.glass-panel-warm {
+  background: rgba(250, 244, 235, 0.62) !important;
+  backdrop-filter: blur(16px) saturate(140%) !important;
+  -webkit-backdrop-filter: blur(16px) saturate(140%) !important;
+  border: 1.5px solid rgba(234, 220, 203, 0.85) !important;
+  box-shadow: 0 8px 30px rgba(180, 150, 120, 0.08), inset 0 1px 2px rgba(255, 255, 255, 0.85) !important;
+}
+
+/* Glassmorphism for card containers across shop, cart, checkout, profile */
+[class*="cart-"] > div[style*="background"],
+[class*="checkout-"] div[style*="background"],
+.pdp-main-image-box,
+.pdp-gallery-wrap button {
+  backdrop-filter: blur(12px) saturate(135%);
+  -webkit-backdrop-filter: blur(12px) saturate(135%);
+}
+
+/* ==========================================================================
+   ULTRA HD / 8K HIGH-PRECISION IMAGE RENDERING & TEXTURE CLARITY
+   ========================================================================== */
+img,
+.category-ref-flower-img,
+.product-card img,
+.pdp-main-image,
+.pdp-gallery-wrap img,
+.category-tile-thumb,
+.cart-item-image {
+  image-rendering: -webkit-optimize-contrast;
+  image-rendering: high-quality;
+  transform: translateZ(0);
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+}
+
+.category-ref-flower-img {
+  filter: contrast(1.03) saturate(1.04) drop-shadow(0 2px 6px rgba(0, 0, 0, 0.05));
+  transition: transform 0.35s ease, filter 0.35s ease;
+}
+
+.category-ref-card:hover .category-ref-flower-img {
+  filter: contrast(1.05) saturate(1.08) drop-shadow(0 4px 12px rgba(184, 134, 11, 0.18));
+}
+
+.product-card img {
+  filter: contrast(1.025) saturate(1.035);
+}
+
+/* ==========================================================================
+   GLOBAL GLASSMORPHISM UI FOR ALL STORE PAGES (Shop, Cart, Checkout, Profile, PDP)
+   ========================================================================== */
+.filter-card,
+.filter-sidebar-header,
+.cart-items-wrapper > div,
+.checkout-form-container > div,
+.pdp-details-container,
+.profile-content-box,
+.profile-sidebar-box {
+  background: rgba(255, 255, 255, 0.58) !important;
+  backdrop-filter: blur(16px) saturate(140%) !important;
+  -webkit-backdrop-filter: blur(16px) saturate(140%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.75) !important;
+  border-radius: var(--radius-lg);
+  box-shadow: 0 8px 24px rgba(45, 37, 32, 0.04), inset 0 1px 2px rgba(255, 255, 255, 0.85) !important;
+}
+
+/* Glass buttons & pill badges */
+.badge-discount,
+.product-cart-btn-icon {
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+.product-cart-btn-icon {
+  background: rgba(255, 255, 255, 0.7) !important;
+  border: 1px solid rgba(255, 255, 255, 0.85) !important;
+}
+
+.product-wishlist-btn {
+  background: rgba(255, 255, 255, 0.7) !important;
+  border: 1px solid rgba(255, 255, 255, 0.85) !important;
+  backdrop-filter: blur(8px) !important;
+  -webkit-backdrop-filter: blur(8px) !important;
+}
+
+
+/* ==========================================================================
+   USER PANEL ANIMATIONS
+   1. Add to Cart Bounce Animation
+   2. Small Rotating Flower Loading Animation
+   ========================================================================== */
+@keyframes cartBounce {
+  0% {
+    transform: scale(1);
+  }
+  25% {
+    transform: scale(1.35) rotate(-8deg);
+  }
+  50% {
+    transform: scale(0.92) rotate(6deg);
+  }
+  75% {
+    transform: scale(1.15) rotate(-3deg);
+  }
+  100% {
+    transform: scale(1) rotate(0deg);
+  }
+}
+
+.cart-bounce-anim {
+  animation: cartBounce 0.65s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
+  background-color: var(--primary) !important;
+  color: #FFFFFF !important;
+}
+
+@keyframes navCartBounce {
+  0% {
+    transform: scale(1);
+  }
+  35% {
+    transform: scale(1.35);
+  }
+  65% {
+    transform: scale(0.92);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.nav-cart-bounce {
+  animation: navCartBounce 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
+}
+
+/* Flower Loading Animation */
+.flower-loader-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 3.5rem 1.5rem;
+  text-align: center;
+  width: 100%;
+}
+
+.flower-loader-spinner {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  animation: rotateFlower 1.4s linear infinite;
+  transform-origin: center center;
+}
+
+@keyframes rotateFlower {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.flower-loader-text {
+  margin-top: 0.85rem;
+  font-size: 0.88rem;
+  font-weight: 500;
+  color: var(--text-muted);
+  letter-spacing: 0.01em;
+}
+
+
+/* ==========================================================================
+   SCROLL REVEAL ANIMATION (Smooth Fade In & Slide Up)
+   ========================================================================== */
+.scroll-reveal {
+  opacity: 0;
+  transform: translateY(28px);
+  transition: opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1),
+              transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: opacity, transform;
+}
+
+.scroll-reveal.revealed {
+  opacity: 1;
+  transform: translateY(0);
+}
